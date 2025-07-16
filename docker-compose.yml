@@ -1,0 +1,21 @@
+services:
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+
+  context7:
+    image: ghcr.io/lrstanley/context7-http:latest
+    platform: linux/amd64
+    ports:
+      - "7001:8080"
+    volumes:
+      - context7-data:/app/data
+
+
+
+volumes:
+  ollama-data:
+  context7-data:
