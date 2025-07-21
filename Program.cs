@@ -85,3 +85,7 @@ while (true)
 //     Console.WriteLine($"IA: {result.Content}");
 //     chatHistory.AddAssistantMessage(result.Content ?? string.Empty);
 // }
+
+
+/// vamos testar este tutorial
+/// https://tallesvaliatti.com/criando-sql-queries-com-o-semantic-kernel-parte-1-cb12c128e2ef
