@@ -1,21 +1,14 @@
 services:
-  ollama:
-    image: ollama/ollama
+  postgres:
+    image: postgres:15-alpine
     ports:
-      - "11434:11434"
+      - "5432:5432"
     volumes:
-      - ollama-data:/root/.ollama
-
-  context7:
-    image: ghcr.io/lrstanley/context7-http:latest
-    platform: linux/amd64
-    ports:
-      - "7001:8080"
-    volumes:
-      - context7-data:/app/data
-
-
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
 
 volumes:
-  ollama-data:
-  context7-data:
+  postgres-data:
