@@ -1,0 +1,34 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Semantic_Kernel_With_Ollama_Test.Domain;
+
+namespace Semantic_Kernel_With_Ollama_Test.Data
+{
+    public class ProdutoConfiguration : IEntityTypeConfiguration<Produtos>
+    {
+        public void Configure(EntityTypeBuilder<Produtos> builder)
+        {
+            builder.HasKey(p => p.Id);
+
+            builder.HasAlternateKey(p => p.IdProduto);
+
+            builder.Property(p => p.Nome).IsRequired().HasMaxLength(100);
+            builder.Property(p => p.DescricaoBreve).HasMaxLength(255);
+
+            builder.HasData(
+                new Produtos { Id = Guid.Parse("f4a2b1d1-72f5-4e26-9e8f-0c8a9d6b3c7e"), IdProduto = 1, Nome = "Laptop Gamer Pro", Quantidade = 15, DescricaoBreve = "Laptop de alta performance para jogos." },
+                new Produtos { Id = Guid.Parse("a8d3e4c2-3b1f-4f9e-8a7d-1b9c0f8e5d2a"), IdProduto = 2, Nome = "Mouse Sem Fio Ergonômico", Quantidade = 50, DescricaoBreve = "Mouse com design confortável para longas horas de uso." },
+                new Produtos { Id = Guid.Parse("b3c9a1e8-5d2a-4f8c-9b7e-2a8d0f6c4b1e"), IdProduto = 3, Nome = "Teclado Mecânico RGB", Quantidade = 30, DescricaoBreve = "Teclado com switches mecânicos e iluminação RGB." },
+                new Produtos { Id = Guid.Parse("c1d8e2f7-6a3b-4e9d-8c5f-3b7a0e9d6c4a"), IdProduto = 4, Nome = "Monitor Ultrawide 34\"", Quantidade = 20, DescricaoBreve = "Monitor curvo para uma experiência imersiva." },
+                new Produtos { Id = Guid.Parse("d9e7f3a6-7b4c-4d8e-9a6b-4c8b1f0e7d5b"), IdProduto = 5, Nome = "Headset Gamer 7.1", Quantidade = 40, DescricaoBreve = "Fone de ouvido com som surround 7.1." },
+                new Produtos { Id = Guid.Parse("e6f5a4b1-8c5d-4c7f-a98c-5d9c2e1f8b6a"), IdProduto = 6, Nome = "Cadeira Gamer Confort", Quantidade = 25, DescricaoBreve = "Cadeira ergonômica para longas sessões de jogos." },
+                new Produtos { Id = Guid.Parse("f2a1b8c9-9d6e-4b5a-b8a7-6e0d3f2a9c7b"), IdProduto = 7, Nome = "Webcam Full HD 1080p", Quantidade = 60, DescricaoBreve = "Webcam para streaming e videoconferências." },
+                new Produtos { Id = Guid.Parse("a4b3c2d1-0e7f-4a6b-9c8d-7f1e4a3b2c8d"), IdProduto = 8, Nome = "SSD NVMe 1TB", Quantidade = 35, DescricaoBreve = "Armazenamento ultrarrápido para sistema e jogos." },
+                new Produtos { Id = Guid.Parse("b9c8d7e6-1f8a-4b9c-a7d6-8a2f5b4c3d9e"), IdProduto = 9, Nome = "Placa de Vídeo RTX 4070", Quantidade = 10, DescricaoBreve = "GPU de última geração para gráficos incríveis." },
+                new Produtos { Id = Guid.Parse("c7d6e5f4-2a9b-4c8d-b6e5-9b3a6c4d2e8f"), IdProduto = 10, Nome = "Gabinete Mid-Tower", Quantidade = 22, DescricaoBreve = "Gabinete com bom fluxo de ar e espaço interno." },
+                new Produtos { Id = Guid.Parse("d5e4f3a2-3b8c-4d7e-a5f4-0c4b7d3e1f9a"), IdProduto = 11, Nome = "Fonte de Alimentação 750W", Quantidade = 28, DescricaoBreve = "Fonte com certificação 80 Plus Gold." },
+                new Produtos { Id = Guid.Parse("e3f2a1b9-4c7d-4e6f-b4a3-1d5c8e2f9a8b"), IdProduto = 12, Nome = "Mousepad Gamer Extra Grande", Quantidade = 70, DescricaoBreve = "Superfície otimizada para mouses de alta precisão." }
+            );
+        }
+    }
+}
