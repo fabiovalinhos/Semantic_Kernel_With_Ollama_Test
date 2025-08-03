@@ -1,16 +1,10 @@
-
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.Ollama;
-using Microsoft.SemanticKernel.Plugins.Core;
 using Semantic_Kernel_With_Ollama_Test.Data;
+using Semantic_Kernel_With_Ollama_Test.Plug;
 
 
 class Program
@@ -22,17 +16,25 @@ class Program
             {
                 services.AddDbContext<AiOllamaDbContext>(options =>
                     options.UseNpgsql(hostContext.Configuration.GetConnectionString("DefaultConnection")));
-                    
+
                 services.AddSingleton(_ => new HttpClient { Timeout = TimeSpan.FromMinutes(5) });
 
-                services.AddSingleton<Kernel>(sp =>
+                services.AddScoped<Kernel>(sp =>
                 {
                     var builder = Kernel.CreateBuilder();
                     builder.AddOllamaChatCompletion(
                         modelId: "qwen2.5-coder",
                         endpoint: new Uri("http://localhost:11434")
                     );
-                    builder.Plugins.AddFromType<TimePlugin>();
+
+                    var dbContext = sp.GetRequiredService<AiOllamaDbContext>();
+
+                    builder.Plugins.Add(KernelPluginFactory.CreateFromType<HoraAtualPlugin>());
+
+                    builder.Plugins.Add(KernelPluginFactory.CreateFromObject(new BuscarProdutoPorDescricaoPlugin(dbContext)));
+                    builder.Plugins.Add(KernelPluginFactory.CreateFromObject(new ProdutosComEstoqueBaixoPlugin(dbContext)));
+                    builder.Plugins.Add(KernelPluginFactory.CreateFromObject(new BuscarProdutoPorNomePlugin(dbContext)));
+
                     return builder.Build();
                 });
             })
@@ -40,7 +42,10 @@ class Program
 
         var kernel = host.Services.GetRequiredService<Kernel>();
 
-        var result = await kernel.InvokePromptAsync("Que horas são agora?");
+        // Obtém a função do plugin
+        var result = await kernel.InvokeAsync<string>("HoraAtualPlugin", "GetCurrentTime");
+
+
         Console.WriteLine("Resposta do modelo:");
         Console.WriteLine(result);
     }
