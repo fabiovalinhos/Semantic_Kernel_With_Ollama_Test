@@ -22,30 +22,26 @@ class Program
             {
                 services.AddDbContext<AiOllamaDbContext>(options =>
                     options.UseNpgsql(hostContext.Configuration.GetConnectionString("DefaultConnection")));
+                    
                 services.AddSingleton(_ => new HttpClient { Timeout = TimeSpan.FromMinutes(5) });
-
-                /*
-                services.AddSingleton<IChatCompletionService>(_ =>
-                {
-                    var client = new OllamaApiClient(new Uri("http://localhost:11434"));
-                    return client.AsChatCompletionService("qwen2.5-coder");
-                });
 
                 services.AddSingleton<Kernel>(sp =>
                 {
                     var builder = Kernel.CreateBuilder();
-                    builder.Services.AddSingleton(sp.GetRequiredService<IChatCompletionService>());
+                    builder.AddOllamaChatCompletion(
+                        modelId: "qwen2.5-coder",
+                        endpoint: new Uri("http://localhost:11434")
+                    );
                     builder.Plugins.AddFromType<TimePlugin>();
                     return builder.Build();
                 });
-                */
             })
             .Build();
 
-        //var kernel = host.Services.GetRequiredService<Kernel>();
+        var kernel = host.Services.GetRequiredService<Kernel>();
 
-        //var result = await kernel.InvokePromptAsync("Que horas são agora?");
-        //Console.WriteLine("Resposta do modelo:");
-        //Console.WriteLine(result);
+        var result = await kernel.InvokePromptAsync("Que horas são agora?");
+        Console.WriteLine("Resposta do modelo:");
+        Console.WriteLine(result);
     }
 }
