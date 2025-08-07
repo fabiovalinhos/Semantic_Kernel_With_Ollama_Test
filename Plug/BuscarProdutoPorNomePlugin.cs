@@ -13,7 +13,7 @@ namespace Semantic_Kernel_With_Ollama_Test.Plug
         _context = context;
     }
 
-    [KernelFunction]
+    [KernelFunction("BuscarPorNome")]
     public async Task<string> BuscarPorNomeAsync(string termo)
     {
         try

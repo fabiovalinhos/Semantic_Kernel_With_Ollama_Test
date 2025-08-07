@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
 using Semantic_Kernel_With_Ollama_Test.Data;
 using Semantic_Kernel_With_Ollama_Test.Plug;
 
@@ -26,6 +27,7 @@ class Program
                         modelId: "llama3.1:8b",
                         endpoint: new Uri("http://localhost:11434")
                     );
+                    
 
                     var dbContext = sp.GetRequiredService<AiOllamaDbContext>();
 
@@ -42,7 +44,10 @@ class Program
             .Build();
 
         var kernel = host.Services.GetRequiredService<Kernel>();
+        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
 
+        var chatHistory = new ChatHistory();
+        
         // Prompt inicial para orientar o modelo
         var promptInicial = """
                 Você é um assistente conectado a um sistema de produtos com acesso aos seguintes plugins:
@@ -67,7 +72,6 @@ class Program
                 """;
 
         Console.WriteLine("Inicializando o assistente...");
-        await kernel.InvokePromptAsync<string>(promptInicial);
 
         Console.WriteLine("Pronto! Digite sua pergunta sobre produtos ou 'que horas são?'.");
         Console.WriteLine("Pressione Enter sem digitar nada para sair.");
@@ -85,7 +89,16 @@ class Program
 
             try
             {
-                var result = await kernel.InvokePromptAsync<string>(input);
+                chatHistory.AddUserMessage(input);
+
+                // Use OpenAIPromptExecutionSettings para habilitar o function calling se o modelo Ollama suportar
+                // Caso contrário, o SK tentará inferir a chamada de função automaticamente.
+                // Se o Ollama não suportar nativamente, pode ser necessário um prompt mais explícito para o modelo.
+                var result = await chatCompletionService.GetChatMessageContentAsync(
+                    chatHistory,
+                    kernel: kernel // Passa o kernel para que o serviço de chat possa acessar os plugins registrados
+                );
+                
                 Console.WriteLine($"Resposta: {result}");
             }
             catch (Exception ex)

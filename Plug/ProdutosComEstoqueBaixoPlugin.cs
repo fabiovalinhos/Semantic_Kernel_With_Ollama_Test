@@ -13,7 +13,7 @@ namespace Semantic_Kernel_With_Ollama_Test.Plug
             _context = context;
         }
 
-        [KernelFunction]
+        [KernelFunction("ListarComEstoqueBaixo")]
         public async Task<string> ListarComEstoqueBaixoAsync(int limite = 5)
         {
             try
