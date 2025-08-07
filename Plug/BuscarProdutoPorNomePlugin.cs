@@ -14,14 +14,25 @@ namespace Semantic_Kernel_With_Ollama_Test.Plug
     }
 
     [KernelFunction]
-    public async Task<List<string>> BuscarPorNomeAsync(string termo)
+    public async Task<string> BuscarPorNomeAsync(string termo)
     {
-        var produtos = await _context.Produtos
-            .Where(p => EF.Functions.ILike(p.Nome, $"%{termo}%"))
-            .Select(p => $"{p.IdProduto}: {p.Nome}")
-            .ToListAsync();
+        try
+        {
+            var produtos = await _context.Produtos
+                .Where(p => EF.Functions.ILike(p.Nome, $"%{termo}%"))
+                .Select(p => $"{p.IdProduto}: {p.Nome}")
+                .ToListAsync();
 
-        return produtos;
+            if (!produtos.Any())
+                return "Nenhum produto encontrado com esse nome.";
+
+            return string.Join(Environment.NewLine, produtos);
+        }
+        catch (Exception ex)
+        {
+            // Logar exceção aqui, se desejar
+            return $"Erro ao buscar produtos por nome: {ex.Message}";
+        }
     }
 }
 }
